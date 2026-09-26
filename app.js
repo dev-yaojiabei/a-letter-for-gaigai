@@ -22,7 +22,7 @@
   function arrivalLabel(saved=true){
     document.querySelector('.open-hint').textContent=bookmark?'从上次那句接着读 ↗':'轻轻打开 ↗';
     el('openLetter').setAttribute('aria-label',bookmark?'拆开信，接着上次读到的那一句':'拆开写给盖盖的信，开始逐句阅读');
-    if(bookmark)document.querySelector('.arrival-note').textContent=saved?`停在第${chapters[lines[index].chapter].number}节，第 ${index+1} 句。下次来，信还在这里。`:'信先收好了。这次浏览器没能保存进度，请先别关闭页面。';
+    if(bookmark)document.querySelector('.arrival-note').textContent=saved?`停在第${chapters[lines[index].chapter].number}节，第 ${index+1} 句。`:'信先收好了。这次浏览器没能保存进度，请先别关闭页面。';
   }
   chapters.forEach((chapter, i) => {
     el('chapter').add(new Option(chapter.number, String(i)));
@@ -47,7 +47,7 @@
     el('prev').disabled=index===0;el('next').disabled=index===lines.length-1;
     el('playLabel').textContent=ended?'再读一遍':rest?'继续下一节':playing?'暂停一下':entered?'接着读':'开始读';
     el('playIcon').textContent=playing?'Ⅱ':'▷';el('play').setAttribute('aria-pressed',String(playing));
-    el('note').textContent=ended?'信读完了，想回看的话还在。':rest?'这一节读完了，歇一会儿也好。':playing?'一句一句，慢慢说。':'停在这里也没关系。';
+    el('note').textContent=ended?'全文完':rest?'本节完':playing?'':'已暂停';
     el('chapterProgress').textContent=`${index-starts[chapter]+1} / ${ends[chapter]-starts[chapter]+1}`;
     el('writingMark').classList.toggle('active',playing);
     el('progress').max=lines.length;el('progress').value=index+1;el('percent').textContent=`${Math.round((index+1)/lines.length*100)}%`;
@@ -128,7 +128,7 @@
     pause();cancelHold();const generation=++quoteGeneration;
     document.querySelectorAll('.kept').forEach(span=>span.classList.remove('kept'));
     document.querySelector(`[data-line="${i}"]`)?.classList.add('kept');
-    el('quotePreview').hidden=true;el('downloadQuote').hidden=true;el('quoteStatus').textContent='正在铺好信纸…';
+    el('quotePreview').hidden=true;el('downloadQuote').hidden=true;el('quoteStatus').textContent='正在生成…';
     if(!el('quoteDialog').open)el('quoteDialog').showModal();
     try{
       await document.fonts.ready;
@@ -151,7 +151,7 @@
       if(quoteURL)URL.revokeObjectURL(quoteURL);quoteURL=URL.createObjectURL(blob);
       el('quotePreview').src=quoteURL;el('quotePreview').alt=lines[i].text;el('quotePreview').hidden=false;
       el('downloadQuote').href=quoteURL;el('downloadQuote').hidden=false;
-      el('quoteStatus').textContent='这一句，单独留给你。';
+      el('quoteStatus').textContent='';
     }catch(_){if(generation===quoteGeneration)el('quoteStatus').textContent='卡片暂时没做好，合上后再试一次。';}
   }
   window.addEventListener('pagehide',()=>{if(entered||bookmark)savePlace();});
