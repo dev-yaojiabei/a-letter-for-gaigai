@@ -29,9 +29,35 @@
     const button = document.createElement('button'); button.textContent = chapter.number;
     button.setAttribute('aria-label', `读第${chapter.number}节`);
     button.addEventListener('click', () => jump(i)); el('chapterNav').append(button);
-    const heading = document.createElement('h3'); heading.textContent = chapter.number; el('fullContent').append(heading);
+
     chapter.paragraphs.forEach(text => { const p = document.createElement('p'); p.textContent = text; el('fullContent').append(p); });
   });
+  const music=el('backgroundMusic');
+  let musicOff=false;
+  try{musicOff=localStorage.getItem('gaigai-music-off')==='true';}catch(_){}
+  music.volume=0.22;
+  function syncMusic(){
+    for(const id of ['musicToggle','fullMusicToggle']){
+      el(id).textContent=music.paused?'♫ 音乐':'♫ 关闭音乐';
+      el(id).setAttribute('aria-pressed',String(!music.paused));
+      el(id).setAttribute('aria-label',music.paused?'播放背景音乐':'关闭背景音乐');
+    }
+  }
+  function startMusic(){
+    if(musicOff)return;
+    el('musicStatus').textContent='';
+    music.play().catch(()=>{syncMusic();el('musicStatus').textContent='点音乐按钮播放';});
+  }
+  function toggleMusic(){
+    musicOff=!music.paused;
+    try{localStorage.setItem('gaigai-music-off',String(musicOff));}catch(_){}
+    if(musicOff)music.pause();else startMusic();
+    syncMusic();
+  }
+  ['musicToggle','fullMusicToggle'].forEach(id=>el(id).addEventListener('click',toggleMusic));
+  ['play','pause'].forEach(event=>music.addEventListener(event,syncMusic));
+  music.addEventListener('error',()=>{syncMusic();el('musicStatus').textContent='音乐暂时无法播放';});
+  syncMusic();
   function stopTimer(){clearTimeout(timer);timer=null;}
   function schedule(){
     stopTimer(); if (!playing || document.hidden || !entered || el('fullDialog').open || el('coverDialog').open || el('quoteDialog').open) return;
@@ -79,12 +105,13 @@
   function openDialog(id){pause();el(id).showModal();}
   function enter(){
     if(closing||el('arrival').classList.contains('leaving'))return;
+    startMusic();
     el('arrival').classList.add('leaving');
     setTimeout(()=>{el('arrival').hidden=true;el('reading').hidden=false;entered=true;playing=true;rest=false;render();el('paperScroll').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});},reducedMotion?0:580);
   }
   el('openLetter').addEventListener('click',enter);
   el('backEnvelope').addEventListener('click',()=>{
-    if(closing)return;closing=true;pause();const saved=savePlace();entered=false;
+    if(closing)return;closing=true;pause();music.pause();const saved=savePlace();entered=false;
     el('reading').inert=true;el('reading').classList.add('folding');
     setTimeout(()=>{
       el('reading').hidden=true;el('reading').classList.remove('folding');el('reading').inert=false;
@@ -96,7 +123,9 @@
   });
   el('play').addEventListener('click',toggle);el('prev').addEventListener('click',()=>move(-1));el('next').addEventListener('click',()=>move(1));
   el('chapter').addEventListener('change',()=>jump(Number(el('chapter').value)));el('speed').addEventListener('change',schedule);
-  el('openFull').addEventListener('click',()=>openDialog('fullDialog'));el('closeFull').addEventListener('click',()=>el('fullDialog').close());
+  el('openFull').addEventListener('click',()=>{startMusic();openDialog('fullDialog');});el('closeFull').addEventListener('click',()=>el('fullDialog').close());
+  el('fullDialog').addEventListener('close',()=>{if(!entered)music.pause();});
+  window.addEventListener('pagehide',()=>music.pause());
   el('openCover').addEventListener('click',()=>openDialog('coverDialog'));el('closeCover').addEventListener('click',()=>el('coverDialog').close());
   for(const id of ['fullDialog','coverDialog','quoteDialog'])el(id).addEventListener('click',e=>{if(e.target!==el(id))return;const r=el(id).getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)el(id).close();});
   el('paperScroll').addEventListener('wheel',pause,{passive:true});el('paperScroll').addEventListener('touchmove',pause,{passive:true});
