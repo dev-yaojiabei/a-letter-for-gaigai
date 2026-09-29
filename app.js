@@ -20,9 +20,9 @@
     try{localStorage.setItem(storageKey,JSON.stringify({index,text:lines[index].text}));bookmark=true;return true;}catch(_){return false;}
   }
   function arrivalLabel(saved=true){
-    document.querySelector('.open-hint').textContent=bookmark?'从上次那句接着读 ↗':'轻轻打开 ↗';
+    document.querySelector('.open-hint').textContent=bookmark?'接着上次读 ↗':'拆开信 ↗';
     el('openLetter').setAttribute('aria-label',bookmark?'拆开信，接着上次读到的那一句':'拆开写给盖盖的信，开始逐句阅读');
-    if(bookmark)document.querySelector('.arrival-note').textContent=saved?`停在第${chapters[lines[index].chapter].number}节，第 ${index+1} 句。`:'信先收好了。这次浏览器没能保存进度，请先别关闭页面。';
+    if(bookmark)document.querySelector('.arrival-note').textContent=saved?'':'信先收好了。这次浏览器没能保存进度，请先别关闭页面。';
   }
   chapters.forEach((chapter, i) => {
     el('chapter').add(new Option(chapter.number, String(i)));
@@ -33,7 +33,7 @@
     chapter.paragraphs.forEach(text => { const p = document.createElement('p'); p.textContent = text; el('fullContent').append(p); });
   });
   const music=el('backgroundMusic');
-  let musicOff=false;
+  let musicOff=false, autoPending=true;
   try{musicOff=localStorage.getItem('gaigai-music-off')==='true';}catch(_){}
   music.volume=0.22;
   function syncMusic(){
@@ -44,12 +44,12 @@
     }
   }
   function startMusic(){
-    if(musicOff)return;
+    if(musicOff){autoPending=false;return;}
     el('musicStatus').textContent='';
-    music.play().catch(()=>{syncMusic();el('musicStatus').textContent='点音乐按钮播放';});
+    music.play().then(()=>{autoPending=false;el('musicStatus').textContent='';}).catch(()=>{syncMusic();if(!musicOff){autoPending=true;el('musicStatus').textContent='轻点页面，开启音乐';}});
   }
   function toggleMusic(){
-    musicOff=!music.paused;
+    autoPending=false;musicOff=!music.paused;
     try{localStorage.setItem('gaigai-music-off',String(musicOff));}catch(_){}
     if(musicOff)music.pause();else startMusic();
     syncMusic();
@@ -58,6 +58,13 @@
   ['play','pause'].forEach(event=>music.addEventListener(event,syncMusic));
   music.addEventListener('error',()=>{syncMusic();el('musicStatus').textContent='音乐暂时无法播放';});
   syncMusic();
+  function unlockMusic(e){
+    if(!autoPending||musicOff||e.target.closest('#musicToggle,#fullMusicToggle'))return;
+    startMusic();
+  }
+  document.addEventListener('click',unlockMusic);
+  document.addEventListener('keydown',unlockMusic);
+  startMusic();
   function stopTimer(){clearTimeout(timer);timer=null;}
   function schedule(){
     stopTimer(); if (!playing || document.hidden || !entered || el('fullDialog').open || el('coverDialog').open || el('quoteDialog').open) return;
@@ -73,7 +80,7 @@
     el('prev').disabled=index===0;el('next').disabled=index===lines.length-1;
     el('playLabel').textContent=ended?'再读一遍':rest?'继续下一节':playing?'暂停一下':entered?'接着读':'开始读';
     el('playIcon').textContent=playing?'Ⅱ':'▷';el('play').setAttribute('aria-pressed',String(playing));
-    el('note').textContent=ended?'全文完':rest?'本节完':playing?'':'已暂停';
+    el('note').textContent='';
     el('chapterProgress').textContent=`${index-starts[chapter]+1} / ${ends[chapter]-starts[chapter]+1}`;
     el('writingMark').classList.toggle('active',playing);
     el('progress').max=lines.length;el('progress').value=index+1;el('percent').textContent=`${Math.round((index+1)/lines.length*100)}%`;
@@ -111,7 +118,7 @@
   }
   el('openLetter').addEventListener('click',enter);
   el('backEnvelope').addEventListener('click',()=>{
-    if(closing)return;closing=true;pause();music.pause();const saved=savePlace();entered=false;
+    if(closing)return;closing=true;autoPending=false;pause();music.pause();const saved=savePlace();entered=false;
     el('reading').inert=true;el('reading').classList.add('folding');
     setTimeout(()=>{
       el('reading').hidden=true;el('reading').classList.remove('folding');el('reading').inert=false;
@@ -173,8 +180,8 @@
       const top=300+Math.max(0,(h-660-rows.length*86)/2);
       rows.forEach((row,n)=>ctx.fillText(row,120,top+n*86));
       ctx.fillStyle='#9b7d5f';ctx.fillRect(120,h-235,840,1);
-      ctx.font=`27px ${font}`;ctx.fillText('后来，她没有一直陪着你',120,h-170);
-      ctx.font=`24px ${font}`;ctx.fillStyle='#887b6d';ctx.fillText(`第${chapters[lines[i].chapter].number}节 · 留住一句话`,120,h-118);
+      ctx.font=`27px ${font}`;ctx.fillText('有些话，想跟你说',120,h-170);
+      ctx.font=`24px ${font}`;ctx.fillStyle='#887b6d';ctx.fillText(`第${chapters[lines[i].chapter].number}节 · 存下这句话`,120,h-118);
       const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('empty')),'image/png'));
       if(generation!==quoteGeneration)return;
       if(quoteURL)URL.revokeObjectURL(quoteURL);quoteURL=URL.createObjectURL(blob);

@@ -1,42 +1,42 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#efe6d7"><meta name="description" content="To：盖盖。给盖盖的一封信"><title>To：盖盖｜后来，她没有一直陪着你</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#efe6d7"><meta name="description" content="To：盖盖。给盖盖的一封信"><title>To：盖盖｜有些话，想跟你说</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23efe6d7'/%3E%3Cpath d='M7 10h18v13H7zM7 10l9 7 9-7' fill='none' stroke='%23765138' stroke-width='1.5'/%3E%3C/svg%3E">
-<link rel="preload" href="letter-wenkai.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=8"><script src="letter.js?v=7" defer></script><script src="app.js?v=8" defer></script>
+<link rel="preload" href="letter-wenkai.woff2?v=9" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=9"><script src="letter.js?v=7" defer></script><script src="app.js?v=9" defer></script>
 </head><body>
 <div class="shell">
-<header class="masthead"><a href="./" class="dedication"><i>To:</i> 盖盖</a><nav aria-label="阅读方式"><button id="openCover" class="text-button">封面</button><span aria-hidden="true">/</span><button id="openFull" class="text-button">读完整封信</button></nav></header>
+<header class="masthead"><a href="./" class="dedication"><i>To:</i> 盖盖</a><nav aria-label="阅读方式"><button id="openCover" class="text-button">看封面</button><span aria-hidden="true">/</span><button id="openFull" class="text-button">看整封信</button></nav></header>
 <div class="music-bar"><button id="musicToggle" class="text-button" aria-pressed="false" aria-label="播放背景音乐">♫ 音乐</button><span>夜的钢琴曲五</span><span id="musicStatus" role="status"></span></div>
-<audio id="backgroundMusic" src="night-piano.m4a" preload="none" loop></audio>
+<audio id="backgroundMusic" src="night-piano.m4a" preload="auto" loop></audio>
 <main>
 <section class="arrival" id="arrival" aria-labelledby="arrivalTitle">
-<p class="eyebrow">给盖盖的一封信</p><h1 id="arrivalTitle">后来，她没有<br>一直陪着你</h1>
-<button class="envelope" id="openLetter" aria-label="拆开写给盖盖的信，开始逐句阅读"><img src="letter-scene.png" alt="暖光落在木桌上的一封信" width="1536" height="1024"><span class="envelope-name">To：盖盖</span><span class="open-hint">轻轻打开 <span aria-hidden="true">↗</span></span></button>
+<h1 id="arrivalTitle">有些话，<br>想跟你说</h1>
+<button class="envelope" id="openLetter" aria-label="拆开写给盖盖的信，开始逐句阅读"><img src="letter-scene.png" alt="暖光落在木桌上的一封信" width="1536" height="1024"><span class="envelope-name">To：盖盖</span><span class="open-hint">拆开信 <span aria-hidden="true">↗</span></span></button>
 <p class="arrival-note"></p>
 </section>
 <section class="reading" id="reading" hidden aria-label="逐句阅读">
-<div class="reading-heading"><span>后来，她没有一直陪着你</span><button id="backEnvelope" class="text-button">今天读到这里</button></div>
+<div class="reading-heading"><span>有些话，想跟你说</span><button id="backEnvelope" class="text-button">今天先读到这</button></div>
 <div class="paper">
 <div class="paper-top"><label for="chapter">第 <select id="chapter" aria-label="选择章节"></select> 节</label><span id="count"></span></div>
 <div class="paper-scroll" id="paperScroll" tabindex="0" aria-label="信纸，按空格暂停，左右键翻句">
 <div class="paper-content"><div class="chapter-heading" id="chapterHeading">一</div><div id="sentences"></div><span class="writing-mark" id="writingMark" aria-hidden="true"></span></div>
 </div>
-<div class="paper-bottom"><span id="note">慢慢读，不着急。</span><span class="chapter-progress" id="chapterProgress"></span></div>
+<div class="paper-bottom"><span id="note"></span><span class="chapter-progress" id="chapterProgress"></span></div>
 </div>
 <div class="reader-controls">
 <button class="arrow-button" id="prev" aria-label="上一句">←</button><button class="play-button" id="play"><span id="playIcon" aria-hidden="true">Ⅱ</span><span id="playLabel">暂停一下</span></button><button class="arrow-button" id="next" aria-label="下一句">→</button>
-<label class="speed-label">节奏 <select id="speed" aria-label="文字出现速度"><option value="0.72">慢一些</option><option value="1" selected>适中</option><option value="1.4">快一些</option></select></label>
+<label class="speed-label">速度 <select id="speed" aria-label="文字出现速度"><option value="0.72">慢一点</option><option value="1" selected>正常</option><option value="1.4">快一点</option></select></label>
 </div>
-<div class="keepsake-tools"><button class="text-button" id="keepCurrent">留住这一句</button><span>也可以长按信里的句子</span></div>
+<div class="keepsake-tools"><button class="text-button" id="keepCurrent">存下这句话</button><span>长按句子也能保存</span></div>
 <div class="progress-rail"><progress id="progress" value="1" max="409" aria-label="全文阅读进度"></progress><span id="percent">0%</span></div>
 <div class="chapter-nav" id="chapterNav" aria-label="四节信纸"></div>
 </section>
-</main><footer class="footer">To：盖盖</footer>
+</main>
 </div>
-<dialog id="fullDialog" aria-labelledby="fullTitle"><div class="dialog-top"><span>To盖盖：</span><button id="fullMusicToggle" class="text-button" aria-pressed="false">♫ 音乐</button><button class="text-button" id="closeFull">合上 ×</button></div><article class="full-letter"><h2 id="fullTitle">后来，她没有一直陪着你</h2><div id="fullContent"></div></article></dialog>
-<dialog id="coverDialog" aria-label="文章封面"><button class="close-cover" id="closeCover" aria-label="关闭封面">×</button><img src="cover.png" alt="后来，她没有一直陪着你，To：盖盖" width="1024" height="1536"></dialog>
-<dialog id="quoteDialog" aria-labelledby="quoteTitle"><div class="dialog-top"><span id="quoteTitle">留住一句话</span><button class="text-button" id="closeQuote">收好 ×</button></div><img id="quotePreview" alt="选中的句子卡片"><p id="quoteStatus" role="status">正在生成…</p><a id="downloadQuote" class="play-button" download="留住一句话-To盖盖.png" hidden>保存小卡片 ↓</a><p class="quote-tip">手机也可以长按卡片保存</p></dialog>
+<dialog id="fullDialog" aria-labelledby="fullTitle"><div class="dialog-top"><span>To盖盖：</span><button id="fullMusicToggle" class="text-button" aria-pressed="false">♫ 音乐</button><button class="text-button" id="closeFull" aria-label="关闭全文">×</button></div><article class="full-letter"><h2 id="fullTitle">有些话，想跟你说</h2><div id="fullContent"></div></article></dialog>
+<dialog id="coverDialog" aria-label="文章封面"><button class="close-cover" id="closeCover" aria-label="关闭封面">×</button><div class="type-cover"><span>To：盖盖</span><h2>有些话，<br>想跟你说</h2></div></dialog>
+<dialog id="quoteDialog" aria-labelledby="quoteTitle"><div class="dialog-top"><span id="quoteTitle">存下这句话</span><button class="text-button" id="closeQuote" aria-label="关闭卡片">×</button></div><img id="quotePreview" alt="选中的句子卡片"><p id="quoteStatus" role="status">正在生成…</p><a id="downloadQuote" class="play-button" download="存下这句话-To盖盖.png" hidden>保存小卡片 ↓</a><p class="quote-tip">手机也可以长按卡片保存</p></dialog>
 <noscript><p class="noscript">逐句阅读需要开启 JavaScript，也可以<a href="letter.txt">直接阅读全文</a>。</p></noscript>
 </body></html>
