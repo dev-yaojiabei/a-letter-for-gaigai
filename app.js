@@ -162,7 +162,7 @@
     try{
       await document.fonts.ready;
       const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
-      const font='"Songti SC", "STSong", "Noto Serif CJK SC", serif';
+      const font='LetterWenKai, "Kaiti SC", STKaiti, serif';
       ctx.font=`48px ${font}`;const rows=wrapText(ctx,lines[i].text,840);
       canvas.width=1080;canvas.height=Math.max(1350,570+rows.length*86);
       const h=canvas.height;ctx.fillStyle='#f5eddf';ctx.fillRect(0,0,1080,h);
